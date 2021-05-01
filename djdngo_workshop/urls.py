@@ -16,10 +16,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from store import views
+from django.conf.urls.staic import staic
+from django.conf import settings
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
-    path('product/', views.product)
+    path('product/', views.product),
 
 ]
+
+if settings.DEBUG:
+    # /static/media
+    urlpatterns += staic(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)   
+    # /static/
+    urlpatterns += staic(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
