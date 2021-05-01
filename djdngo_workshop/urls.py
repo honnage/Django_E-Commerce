@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from store import views
-from django.conf.urls.staic import staic
+from django.conf.urls.static import static
 from django.conf import settings
 
 
@@ -29,7 +29,7 @@ urlpatterns = [
 
 if settings.DEBUG:
     # /static/media
-    urlpatterns += staic(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)   
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)   
     # /static/
-    urlpatterns += staic(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
