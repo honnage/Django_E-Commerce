@@ -23,7 +23,8 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('product/', views.product),
-    path('category/<slug:category_slug>', views.index, name="product_by_category")
+    path('', views.index, name="home"),
+    path('category/<slug:category_slug>', views.index, name="product_by_category"),
 
 ]
 
