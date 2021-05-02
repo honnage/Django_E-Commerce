@@ -1,5 +1,7 @@
 {% extends 'layouts.html' %}
+{% load humanize %}
 {% block content %}
+
 <div class="container">
     <div class="row">
         <div class="col-lg-2"></div>
@@ -8,7 +10,7 @@
                 <img class="card-img-top img-fluid" src="{{product.image.url}}" alt="">
                     <div class="card-body">
                     <h3 class="card-title">{{product.name}}</h3>
-                    <h4>ราคา {{product.price}} บาท</h4>
+                    <h4>ราคา {{product.price|intcomma}} บาท</h4>
                     <p class="card-text">{{product.description}}</p>
                     <div class="card-footer">
                         {% if product.stock <= 0 %}
