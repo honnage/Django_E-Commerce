@@ -52,6 +52,8 @@ class Cart(models.Model):
     class Meta:
         db_table = 'cart'
         ordering = ('data_added',)
+        verbose_name = 'ตะกร้าสินค้า'
+        verbose_name_plural = 'ข้อมูลตะกร้าสินค้า'
 
 class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -61,9 +63,11 @@ class CartItem(models.Model):
 
     class Meta:
         db_table = 'cartItem'
+        verbose_name = 'รายการสินค้าตะกร้าสินค้า'
+        verbose_name_plural = 'ข้อมูลรายการสินค้าในตะกร้า'
        
     def sub_total(self):
         return self.product.price + self.quantity
 
     def __str__(self):
-        return self.cart
+        return self.product.name

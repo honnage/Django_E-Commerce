@@ -1,4 +1,4 @@
-from django.shortcuts import render,get_object_or_404
+from django.shortcuts import render,get_object_or_404,redirect
 from store.models import Category, Product, Cart, CartItem
 # Create your views here.
 def index(request, category_slug=None):
@@ -47,13 +47,14 @@ def addCart(request, product_id):
             cart_item.quantity += 1
             #บันทึก/อัพเดท
             cart_item.save()
-            
+
     except  CartItem.DoesNotExist:
         #ซื้อรายการสินค้าครั้งแรก
         #บันทึกลงฐานข้อมูล
-        cart_item = CartItem.create(
+        cart_item = CartItem.objects.create(
             product = product,
             cart = cart,
             quantity = 1
         )
         cart_item.save()
+    return redirect('/')
