@@ -1,5 +1,5 @@
 from django.shortcuts import render,get_object_or_404
-from store.models import Category,Product
+from store.models import Category, Product, Cart, CartItem
 # Create your views here.
 def index(request, category_slug=None):
     products = None
@@ -20,3 +20,18 @@ def productPage(request, category_slug, product_slug):
         raise e
 
     return render(request, 'product.html',{'product':product})
+
+def _card_id(request):
+    cart = request.session.session_key
+    if not cart:
+        cart = request.session.create()
+    return cart
+
+def addCart(request, product_id):
+    products = Product.objects.get(id = product_id)
+    try:
+        Cart.object.get(card_id = _card_id(request))
+    except Cart.DoesNotExist:
+        Cart.objects.create(cart_id = _card_id(request))
+        Cart.save()
+        
