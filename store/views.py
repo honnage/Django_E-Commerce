@@ -21,17 +21,39 @@ def productPage(request, category_slug, product_slug):
 
     return render(request, 'product.html',{'product':product})
 
-def _card_id(request):
+
+def _cart_id(request):
     cart = request.session.session_key
     if not cart:
         cart = request.session.create()
     return cart
 
+
 def addCart(request, product_id):
-    products = Product.objects.get(id = product_id)
+   #ดึงสินค้าที่เราซื้อมาใช้งาน
+    product=Product.objects.get(id=product_id)
+    #สร้างตะกร้าสินค้า
     try:
-        Cart.object.get(card_id = _card_id(request))
+        cart = Cart.objects.get(cart_id = _cart_id(request))
     except Cart.DoesNotExist:
-        Cart.objects.create(cart_id = _card_id(request))
-        Cart.save()
-        
+        cart = Cart.objects.create(cart_id = _cart_id(request))
+        cart.save()
+     
+    try:
+        #ซื้อรายการสินค้าซ้ำ
+        cart_item = CartItem.objects.get(product=product, cart=cart)
+        if cart_item.quantity < cart_item.product.stock:
+            #เปลี่ยนจำนวนรายการสินค้า
+            cart_item.quantity += 1
+            #บันทึก/อัพเดท
+            cart_item.save()
+            
+    except  CartItem.DoesNotExist:
+        #ซื้อรายการสินค้าครั้งแรก
+        #บันทึกลงฐานข้อมูล
+        cart_item = CartItem.create(
+            product = product,
+            cart = cart,
+            quantity = 1
+        )
+        cart_item.save()
