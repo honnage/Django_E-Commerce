@@ -22,10 +22,10 @@
                 {% for item in cart_items %}
                 <tr>
                     <td class="cart_product">
-                        <a href=""><img src="{{item.product.image.url}}" width="80px" height="80px" alt=""></a>
+                        <a href="{{item.product.get_url}}"><img src="{{item.product.image.url}}" width="80px" height="80px" alt=""></a>
                     </td>
                     <td class="cart_description">
-                        <h5><a href="">{{item.product.name}}</a></h5>
+                        <h5><a href="{{item.product.get_url}}">{{item.product.name}}</a></h5>
                     </td>
                     <td class="cart_price">
                         <p>{{item.product.price|intcomma}}</p>
