@@ -67,7 +67,7 @@ class CartItem(models.Model):
         verbose_name_plural = 'ข้อมูลรายการสินค้าในตะกร้า'
        
     def sub_total(self):
-        return self.product.price + self.quantity
+        return self.product.price * self.quantity
 
     def __str__(self):
         return self.product.name
