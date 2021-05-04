@@ -62,15 +62,15 @@ def addCart(request, product_id):
 def cartdetail(request):
     total = 0
     counter = 0
-    cart_items = None
+    cart_items=None
     try:
-        cart = Cart.objects.get(cart_id = _cart_id(request))
-        cart_items = CartItem.objects.filter(cart = cart, active=True)
+        cart=Cart.objects.get(cart_id=_cart_id(request)) #ดึงตะกร้า
+        cart_items=CartItem.objects.filter(cart=cart,available=True) #ดึงข้อมูลสินค้าในตะกร้า
         for item in cart_items:
-            total += (item.product.price * item.quantity )
-            counter += item.quantity
-    except Exception as e:
+            total+=(item.product.price*item.quantity)
+            counter+=item.quantity
+    except Exception as e :
         pass
     
-    return render(request, 'cartdetail.html', 
-        dict(cart_items = cart_items, total = total, counter = counter))
+    return render(request,'cartdetail.html',
+    dict(cart_items=cart_items,total=total,counter=counter))
