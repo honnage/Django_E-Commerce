@@ -1,6 +1,7 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from store.models import Category, Product, Cart, CartItem
 from store.forms import SignUpForm
+from django.contrib.auth.models import Group, User
 # Create your views here.
 def index(request, category_slug=None):
     products = None
@@ -88,5 +89,14 @@ def removeCart(request, product_id):
 
 
 def signUpView(request):
-    form = SignUpForm()
+    if request.method =='POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():  
+            form.save()
+            username = form.cleaned_data.get('username')
+            singUpUser = User.objects.get(username = username)
+            customer_group = Group.objects.get(name="Customer")
+            customer_group.user_set.add(singUpUser)
+    else:
+        form = SignUpForm()
     return render(request,"signup.html",{'form':form})
