@@ -59,6 +59,7 @@ def addCart(request, product_id):
         cart_item.save()
     return redirect('/')
 
+
 def cartdetail(request):
     total = 0
     counter = 0
@@ -74,3 +75,12 @@ def cartdetail(request):
     
     return render(request,'cartdetail.html',
     dict(cart_items=cart_items,total=total,counter=counter))
+
+
+def removeCart(request, product_id):
+    cart = Cart.objects.get(cart_id = _cart_id(request))
+    product = get_object_or_404(Product, id = product_id)
+    cartItem = CartItem.objects.get(product = product, cart = cart)
+
+    cartItem.delete()
+    return redirect('cartdetail')
