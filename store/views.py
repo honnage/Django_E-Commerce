@@ -3,7 +3,7 @@ from store.models import Category, Product, Cart, CartItem
 from store.forms import SignUpForm
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 # Create your views here.
 def index(request, category_slug=None):
     products = None
@@ -119,3 +119,7 @@ def signInView(request):
     else:
         form = AuthenticationForm()
     return render(request,"signin.html",{'form':form})
+
+def signOutView(request):
+    logout(request)
+    return redirect('signIn')
