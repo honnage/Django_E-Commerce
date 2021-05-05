@@ -16,7 +16,7 @@
                         {% if product.stock <= 0 %}
                             <center><h5 class="text-danger">ขณะนี้สินค้าหมด</h5></center>
                         {% else %}
-                            <a href="" class="btn btn-primary">เพิ่มลงตะกร้า</a>
+                            <a href="{%url 'addCart' product.id %}" class="btn btn-primary">เพิ่มลงตะกร้า</a>
                         {% endif %}
                     </div>
                 </div>
