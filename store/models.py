@@ -55,6 +55,7 @@ class Cart(models.Model):
         verbose_name = 'ตะกร้าสินค้า'
         verbose_name_plural = 'ข้อมูลตะกร้าสินค้า'
 
+
 class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
@@ -72,14 +73,15 @@ class CartItem(models.Model):
     def __str__(self):
         return self.product.name
 
+
 class Order(models.Model):
-    name = models.CharField(max_length=255, blank=True)
-    address = models.CharField(max_length=255, blank=True)
-    city = models.CharField(max_length=255, blank=True)
-    postcode = models.CharField(max_length=255, blank=True)
-    total = models.DecimalField(max_digits=10, decimal_places=2)
-    email = models.EmailField(max_length=255, blank=True)
-    token = models.CharField(max_length=255, blank=True)
+    name=models.CharField(max_length=255,blank=True)
+    address=models.CharField(max_length=255,blank=True)
+    city=models.CharField(max_length=255,blank=True)
+    postcode=models.CharField(max_length=255,blank=True)
+    total=models.DecimalField(max_digits=10,decimal_places=2)
+    email=models.EmailField(max_length=250,blank=True)
+    token=models.CharField(max_length=255,blank=True)
 
     class Meta:
         db_table = 'order'
