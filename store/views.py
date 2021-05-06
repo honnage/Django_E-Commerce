@@ -4,6 +4,7 @@ from store.forms import SignUpForm
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
 # Create your views here.
 def index(request, category_slug=None):
     products = None
@@ -14,7 +15,18 @@ def index(request, category_slug=None):
     else:
         products = Product.objects.all().filter(available = True)
 
-    return render(request,'index.html',{'products':products, 'categoty':category_page})
+    paginator = Paginator(products,3)
+    try:
+        page = int(request.GET.get('page','1'))
+    except:
+        page = 1
+    
+    try:
+        porductperPage = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        porductperPage = paginator.page(paginator.num_pages)
+
+    return render(request,'index.html',{'products':porductperPage,'category':category_page})
 
 
 def productPage(request, category_slug, product_slug):
