@@ -6,6 +6,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
+import stripe
+
 # Create your views here.
 def index(request, category_slug=None):
     products = None
@@ -90,9 +93,19 @@ def cartdetail(request):
             counter+=item.quantity
     except Exception as e :
         pass
-    
+
+    stripe.api_key = settings.SECRET_KEY
+    stripe_total = int(total*100)
+    description = "Payment Online"
+    data_key = settings.PUBLIC_KEY
+
     return render(request,'cartdetail.html',
-    dict(cart_items=cart_items,total=total,counter=counter))
+    dict(cart_items = cart_items, 
+        total = total, 
+        counter = counter, 
+        data_key = data_key,
+        stripe_total = stripe_total,
+        description = description))
 
 
 def removeCart(request, product_id):
