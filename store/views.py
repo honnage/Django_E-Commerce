@@ -1,5 +1,5 @@
 from django.shortcuts import render,get_object_or_404,redirect
-from store.models import Category, Product, Cart, CartItem
+from store.models import Category, Product, Cart, CartItem, Order, OrderItem
 from store.forms import SignUpForm
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.forms import AuthenticationForm
@@ -84,13 +84,13 @@ def addCart(request, product_id):
 def cartdetail(request):
     total = 0
     counter = 0
-    cart_items=None
+    cart_items = None
     try:
-        cart=Cart.objects.get(cart_id=_cart_id(request)) #ดึงตะกร้า
-        cart_items=CartItem.objects.filter(cart=cart,available=True) #ดึงข้อมูลสินค้าในตะกร้า
+        cart = Cart.objects.get(cart_id = _cart_id(request)) #ดึงตะกร้า
+        cart_items = CartItem.objects.filter(cart = cart,active=True) #ดึงข้อมูลสินค้าในตะกร้า
         for item in cart_items:
-            total+=(item.product.price*item.quantity)
-            counter+=item.quantity
+            total += (item.product.price*item.quantity)
+            counter += item.quantity
     except Exception as e :
         pass
 
@@ -99,28 +99,57 @@ def cartdetail(request):
     description = "Payment Online"
     data_key = settings.PUBLIC_KEY
 
-    return render(request,'cartdetail.html',
-    dict(cart_items = cart_items, 
-        total = total, 
-        counter = counter, 
-        data_key = data_key,
-        stripe_total = stripe_total,
-        description = description))
-
     if request.method == "POST":
-        try:
+        try :
             token = request.POST['stripeToken']
             email = request.POST['stripeEmail']
+            name = request.POST['stripeBillingName']
+            address = request.POST['stripeBillingAddressLine1']
+            city = request.POST['stripeBillingAddressCity']
+            postcode = request.POST['stripeShippingAddressZip']
+
             customer = stripe.Customer.create(
                 email = email,
                 source = token
             )
+
             charge=stripe.Charge.create(
                 amount = stripe_total,
                 currency = 'thb',
                 description = description,
                 customer = customer.id
             )
+
+            #บันทึกข้อมูลใบสั่งซื้อ
+            order = Order.objects.create(
+                name = name,
+                address = address,
+                city = city,
+                postcode = postcode,
+                total = total,
+                email = email,
+                token = token
+            )
+            order.save()
+
+            #บันทึกรายการสั่งซื้อ
+            for item in cart_items :
+                order_item = OrderItem.objects.create(
+                    product = item.product.name,
+                    quantity = item.quantity,
+                    price = item.product.price,
+                    order = order
+                )
+                order_item.save()
+
+                #ลดจำนวน Stock
+                product = Product.objects.get(id = item.product.id)
+                product.stock = int(item.product.stock - order_item.quantity)
+                product.save()
+                item.delete()
+
+            return redirect('thankyou')
+
         except stripe.error.CardError as e:
             return False, e
 
