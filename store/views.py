@@ -78,7 +78,7 @@ def addCart(request, product_id):
             quantity = 1
         )
         cart_item.save()
-    return redirect('/')
+    return redirect('cartdetail')
 
 
 def cartdetail(request):
@@ -145,7 +145,7 @@ def cartdetail(request):
                 product.stock=int(item.product.stock-order_item.quantity)
                 product.save()
                 item.delete()
-            return redirect('home')
+            return redirect('thankyou')
 
         except stripe.error.CardError as e :
             return False , e
@@ -219,3 +219,6 @@ def viewOrder(request, order_id):
         order = Order.objects.get(email = email, id = order_id)
         orderitem = OrderItem.objects.filter(order=order)
     return render(request,'viewOrder.html',{'order':order, 'order_items':orderitem})
+
+def thankyou(request):
+    return render(request, 'thankyou.html')
