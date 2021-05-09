@@ -196,10 +196,19 @@ def signInView(request):
         form = AuthenticationForm()
     return render(request,"signin.html",{'form':form})
 
+
 def signOutView(request):
     logout(request)
     return redirect('signIn')
 
+
 def search(request):
     products = Product.objects.filter(name__contains = request.GET['title'])
     return render(request,'index.html',{'products':products})
+
+
+def orderHistory(request):
+    if request.user.is_authenticated:
+        email = str(request.user.email)
+        orders = Order.objects.filter(email=email)
+    return render(request,'orders.html',{'orders':orders})

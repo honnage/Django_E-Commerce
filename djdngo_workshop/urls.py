@@ -32,6 +32,7 @@ urlpatterns = [
     path('account/login', views.signInView, name="signIn"),
     path('account/logout', views.signOutView, name="signOut"),
     path('search/', views.search, name="search"),
+    path('orderHistory', views.orderHistory, name="orderHistory"),
 
 ]
 

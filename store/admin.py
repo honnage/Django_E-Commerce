@@ -7,12 +7,12 @@ class ProductAdmin(admin.ModelAdmin):
     list_per_page = 10
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display=['id','name','email','total','token']
-    list_per_page=5
+    list_display=['id','name','email','total','token','created','update']
+    list_per_page = 10
 
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display=['order','product','quantity','price']
-    list_per_page=5
+    list_display=['order','product','quantity','price','created','update']
+    list_per_page = 10
 
 admin.site.register(Category)
 admin.site.register(Product, ProductAdmin)
