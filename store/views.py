@@ -107,6 +107,23 @@ def cartdetail(request):
         stripe_total = stripe_total,
         description = description))
 
+    if request.method == "POST":
+        try:
+            token = request.POST['stripeToken']
+            email = request.POST['stripeEmail']
+            customer = stripe.Customer.create(
+                email = email,
+                source = token
+            )
+            charge=stripe.Charge.create(
+                amount = stripe_total,
+                currency = 'thb',
+                description = description,
+                customer = customer.id
+            )
+        except stripe.error.CardError as e:
+            return False, e
+
 
 def removeCart(request, product_id):
     cart = Cart.objects.get(cart_id = _cart_id(request))
