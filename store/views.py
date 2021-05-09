@@ -87,7 +87,7 @@ def cartdetail(request):
     cart_items = None
     try:
         cart = Cart.objects.get(cart_id = _cart_id(request)) #ดึงตะกร้า
-        cart_items = CartItem.objects.filter(cart = cart,active=True) #ดึงข้อมูลสินค้าในตะกร้า
+        cart_items = CartItem.objects.filter(cart = cart, available = True) #ดึงข้อมูลสินค้าในตะกร้า
         for item in cart_items:
             total += (item.product.price*item.quantity)
             counter += item.quantity
@@ -100,8 +100,8 @@ def cartdetail(request):
     data_key = settings.PUBLIC_KEY
 
     if request.method == "POST":
-        try :
-            token = request.POST['stripeToken']
+        try:
+            token=request.POST['stripeToken']
             email = request.POST['stripeEmail']
             name = request.POST['stripeBillingName']
             address = request.POST['stripeBillingAddressLine1']
@@ -113,13 +113,12 @@ def cartdetail(request):
                 source = token
             )
 
-            charge=stripe.Charge.create(
+            charge = stripe.Charge.create(
                 amount = stripe_total,
                 currency = 'thb',
                 description = description,
                 customer = customer.id
             )
-
             #บันทึกข้อมูลใบสั่งซื้อ
             order = Order.objects.create(
                 name = name,
@@ -141,18 +140,22 @@ def cartdetail(request):
                     order = order
                 )
                 order_item.save()
-
                 #ลดจำนวน Stock
                 product = Product.objects.get(id = item.product.id)
                 product.stock = int(item.product.stock - order_item.quantity)
                 product.save()
                 item.delete()
-
             return redirect('thankyou')
+            
+        except stripe.error.CardError as e :
+            return False , e
 
-        except stripe.error.CardError as e:
-            return False, e
-
+    return render(request,'cartdetail.html',
+    dict(cart_items = cart_items, total = total, counter = counter,
+    data_key = data_key,
+    stripe_total = stripe_total,
+    description = description
+    ))
 
 def removeCart(request, product_id):
     cart = Cart.objects.get(cart_id = _cart_id(request))
