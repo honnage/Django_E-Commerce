@@ -141,20 +141,20 @@ def cartdetail(request):
                 )
                 order_item.save()
                 #ลดจำนวน Stock
-                product = Product.objects.get(id = item.product.id)
-                product.stock = int(item.product.stock - order_item.quantity)
+                product=Product.objects.get(id=item.product.id)
+                product.stock=int(item.product.stock-order_item.quantity)
                 product.save()
                 item.delete()
-            return redirect('thankyou')
-            
+            return redirect('home')
+
         except stripe.error.CardError as e :
             return False , e
 
     return render(request,'cartdetail.html',
-    dict(cart_items = cart_items, total = total, counter = counter,
-    data_key = data_key,
-    stripe_total = stripe_total,
-    description = description
+    dict(cart_items=cart_items,total=total,counter=counter,
+    data_key=data_key,
+    stripe_total=stripe_total,
+    description=description
     ))
 
 def removeCart(request, product_id):
